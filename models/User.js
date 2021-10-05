@@ -5,13 +5,9 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required: [true, 'Please enter an email address']
     },
-    firstname:{
+    fullname:{
         type:String,
-        required: [true, 'Please enter first name']
-    },
-    lastname:{
-        type:String,
-        required: [true, 'Please enter last name']
+        required: [true, 'Please enter full name']
     },
     password:{
         type:String,
@@ -32,7 +28,11 @@ const UserSchema = new mongoose.Schema({
     isServiceProvider:{
         type:Boolean,
         required: [true, 'Are you a service provider?']
-    }
+    },
+    joindate:{
+        type:Date,
+        required: [true, 'Joining date?']
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema)
