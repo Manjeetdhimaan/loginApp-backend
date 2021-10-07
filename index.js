@@ -11,12 +11,14 @@ app.use(cors());
 app.use(express.json());
 // Routes
 const userRoutes = require('./api/UserRoutes');
+const adminRoutes = require('./api/adminRoutes');
 
 
 app.get('/', (req, res)=>{
     res.send('hello')
 })
 app.use('/users', userRoutes);
+app.use('/admin', adminRoutes);
 
 // MongoClient.connect(process.env.MONGODB, function(err, db) {
 //     if (err) throw err;

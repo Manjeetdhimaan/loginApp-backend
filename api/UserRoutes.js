@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { updateOne } = require('../models/User');
 const User = require('../models/User');
 
 // router.get('/:id', (req, res) => {
@@ -49,9 +48,24 @@ router.post('/login', (req, res) => {
         res.status(500).json({ error: err.message })
     })
 })
+
+router.get('/:id', (req, res) => {
+    let id = req.params.id
+    User.findOne({ _id: id}).then(user => {
+        if (user) {
+            res.status(200).json(user)
+        }
+        else {
+            res.status(401).json({ error: 'Incorrect email or password' })
+        }
+    }).catch(err => {
+        res.status(500).json({ error: err.message })
+    })
+})
+
+
 router.put('/update/:id', (req, res)=>{
     let id = req.params.id;
-    console.log(id)
     User.findOne({_id:id}, (err, foundedObject)=>{
         if(err){
             console.log(err);
@@ -62,11 +76,11 @@ router.put('/update/:id', (req, res)=>{
                 res.status(404).send();
             }
             else{
-                if(req.body.firstname){
-                    foundedObject.firstname = req.body.firstname;
+                if(req.body.fullname){
+                    foundedObject.fullname = req.body.fullname;
                 }
-                if(req.body.lastname){
-                    foundedObject.lastname = req.body.lastname;
+                if(req.body.email){
+                    foundedObject.email = req.body.email;
                 }
                 foundedObject.save((err, updatedObject)=>{
                     if(err){
