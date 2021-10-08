@@ -33,6 +33,10 @@ const UserSchema = new mongoose.Schema({
         type:Date,
         required: [true, 'Joining date?']
     },
+    phone:{
+        type:String,
+        required: [true, 'Provide your mobile number']
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema)

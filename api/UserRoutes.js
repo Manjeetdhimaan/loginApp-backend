@@ -82,6 +82,12 @@ router.put('/update/:id', (req, res)=>{
                 if(req.body.email){
                     foundedObject.email = req.body.email;
                 }
+                if(req.body.password){
+                    foundedObject.password = req.body.password;
+                }
+                if(req.body.bio){
+                    foundedObject.bio = req.body.bio;
+                }
                 foundedObject.save((err, updatedObject)=>{
                     if(err){
                         console.log(err)

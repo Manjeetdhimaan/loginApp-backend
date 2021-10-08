@@ -2,9 +2,6 @@ const router = require('express').Router();
 const Admin = require('../models/Admin');
 var MongoClient = require('mongodb').MongoClient;
 
-
-
-
 router.post('/adminLogin', (req, res) => {
     MongoClient.connect(process.env.MONGODB, (err, db) => {
         if (err) throw err;
