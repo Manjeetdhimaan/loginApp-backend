@@ -37,6 +37,26 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required: [true, 'Provide your mobile number']
     },
+    leaves:{
+        type:Object,
+        required: false
+    },
+    remainingLeaves:{
+        type:String,
+        required: false
+    },
+    totalLeaves:{
+        type:String,
+        required: false
+    },
+    appliedLeaves:{
+        type:String,
+        required: false
+    },
+    camps:{
+        type:Object,
+        required: false
+    },
 });
 
 module.exports = mongoose.model('User', UserSchema)

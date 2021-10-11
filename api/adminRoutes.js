@@ -17,6 +17,7 @@ router.post('/adminLogin', (req, res) => {
             res.status(500).json({ error: err.message })
         })
     });
+    
     // Admin.findOne({ email: req.body.email, password: req.body.password }).then(user => {
     //     if (user) {
     //         res.status(200).json(user)
