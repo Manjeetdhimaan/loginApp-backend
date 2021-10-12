@@ -2,7 +2,6 @@ const router = require('express').Router();
 const User = require('../models/User');
 var MongoClient = require('mongodb').MongoClient;
 
-
 // router.get('/:id', (req, res) => {
 //     User.findById(req.params.id).then(users => {
 //         res.status(200).json(users);
@@ -66,17 +65,17 @@ router.get('/:id', (req, res) => {
 
 router.post('/insert/:id', (req, res) => {
     let id = req.params.id
-    const leaves= {
-        leaveType:req.body.leaveType,
-        remainingLeaves:req.body.remainingLeaves,
-        totalLeaves:req.body.totalLeaves,
-        appliedLeaves:req.body.appliedLeaves
+    const leaves = {
+        leaveType: req.body.leaveType,
+        remainingLeaves: req.body.remainingLeaves,
+        totalLeaves: req.body.totalLeaves,
+        appliedLeaves: req.body.appliedLeaves
     };
     User.updateOne(
-        { _id: id },{ $set:  leaves}, { new: true }, function (err, article) {
-        if (err) return handleError(err);
-        res.send(article);
-      });
+        { _id: id }, { $set: leaves }, { new: true }, function (err, article) {
+            if (err) return handleError(err);
+            res.send(article);
+        });
 });
 
 
@@ -117,6 +116,71 @@ router.put('/update/:id', (req, res) => {
         }
     })
 })
+//check in
+router.post("/:id/enter", async (req, res) => {
+    try {
+        const data = {
+            entry: Date.now()
+        };
+        const user = await User.findById(req.params.id);
+
+        //if the user has an attendance array;
+
+        if (user.attendance && user.attendance.length > 0) {
+            //for a new checkin attendance, the last checkin
+            //must be at least 24hrs less than the new checkin time;
+            const lastCheckIn = user.attendance[user.attendance.length - 1];
+            const lastCheckInTimestamp = lastCheckIn.date.getTime();
+            // console.log(Date.now(), lastCheckInTimestamp);
+            if (Date.now() > lastCheckInTimestamp + 100) {
+                user.attendance.push(data);
+                await user.save();
+                req.flash('success', 'You have been signed in for today');
+
+            } else {
+                req.flash("error", "You have signed in today already");
+            }
+        } else {
+            user.attendance.push(data);
+            await user.save();
+            req.flash('success', 'You have been signed in for today');
+        }
+
+    } catch (error) {
+        console.log("something went wrong");
+        console.log(error);
+    }
+});
+//check out
+router.post("/:id/exit", async (req, res) => {
+    // the attendance than can be checked out must be last entry in the attendance array
+    try {
+        const user = await User.findOne({ _id: req.params.id });
+
+        //check if there is an attendance entry
+        if (user.attendance && user.attendance.length > 0) {
+
+            //check whether the exit time of the last element of the attedance entry has a value
+            const lastAttendance = user.attendance[user.attendance.length - 1];
+            if (lastAttendance.exit.time) {
+                req.flash('error', 'You have already signed out today');
+                res.redirect(`/${req.params.id}`);
+                return;
+            }
+            lastAttendance.exit.time = Date.now();
+            lastAttendance.exit.reason = req.body.reason;
+            await user.save();
+            req.flash('success', 'You have been successfully signed out')
+            res.redirect(`/${req.params.id}`);
+
+        } else { //if no entry
+            req.flash('error', 'You do not have an attendance entry ');
+            res.redirect('back')
+        }
+    } catch (error) {
+        console.log('Cannot find User');
+    }
+});
 const userExists = async (email) => {
     const user = await User.findOne({ email: email.toLowerCase().trim() })
     if (user) {

@@ -34,10 +34,10 @@ app.use('/admin', adminRoutes);
 
 
 //  mongodb+srv://newUser:<password>@cluster0.qcyjq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-mongoose.connect(process.env.MONGODB, {useUnifiedTopology:true})
+mongoose.connect(process.env.MONGODB, { useUnifiedTopology:true})
 .then(()=>{
     app.listen(port, ()=>{
-        console.log('app running on port 5000 and connected with db')
+        console.log(`app running on port ${port} and connected with db`)
     })
 }).catch(err=>console.log(err))
 
