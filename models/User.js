@@ -1,95 +1,95 @@
-const  mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-    email:{
-        type:String,
+    email: {
+        type: String,
         required: [true, 'Please enter an email address'],
-        trim:true
+        trim: true
     },
-    fullname:{
-        type:String,
+    fullname: {
+        type: String,
         required: [true, 'Please enter full name'],
-         trim:true
+        trim: true
     },
-    password:{
-        type:String,
+    password: {
+        type: String,
         required: [true, 'Please enter a password'],
-         trim:true
+        trim: true
     },
-    service:{
-        type:String,
+    service: {
+        type: String,
         required: [true, 'Please enter a service'],
-         trim:true
+        trim: true
     },
-    bio:{
-        type:String,
-        required: [true, 'Please enter bio'],
-         trim:true
+    bio: {
+        type: String,
+        required: [false, 'Please enter bio'],
+        trim: true
     },
-    pic:{
-        type:String,
+    pic: {
+        type: String,
         required: [true, 'Please enter a pic url'],
-         trim:true
+        trim: true
     },
-    isServiceProvider:{
-        type:Boolean,
+    isServiceProvider: {
+        type: Boolean,
         required: [true, 'Are you a service provider?'],
-         trim:true
+        trim: true
     },
-    joindate:{
-        type:Date,
+    joindate: {
+        type: Date,
         required: [true, 'Joining date?'],
-         trim:true
+        trim: true
     },
-    phone:{
-        type:String,
+    phone: {
+        type: String,
         required: [true, 'Provide your mobile number'],
-         trim:true
+        trim: true
     },
-    leaves:{
-        type:Object,
+    leaves: {
+        type: Object,
         required: false,
-         trim:true
+        trim: true
     },
-    remainingLeaves:{
-        type:String,
+    remainingLeaves: {
+        type: String,
         required: false,
-        trim:true
+        trim: true
     },
-    totalLeaves:{
-        type:String,
+    totalLeaves: {
+        type: String,
         required: false,
-         trim:true
+        trim: true
     },
-    appliedLeaves:{
-        type:String,
+    appliedLeaves: {
+        type: String,
         required: false,
-         trim:true
+        trim: true
     },
-    camps:{
-        type:Object,
+    camps: {
+        type: Object,
         required: false,
-        trim:true
+        trim: true
     },
-    attendance:[{
-        date:{
-             type:Date,
-             default:Date.now,
-         },
-         entry:{type:Date},
-         exit:{
-             time:{
-                 type:Date
-             },
-             // 1 - General
-             // 2 - Vacation
-             // 3 - Doctor
-             reason:Number
-         }
- 
+    attendance: [{
+        date: {
+            type: Date,
+            default: Date.now,
+        },
+        entry: { type: Date },
+        exit: {
+            time: {
+                type: Date
+            },
+            // 1 - General
+            // 2 - Vacation
+            // 3 - Doctor
+            exitType: String
+        }
+
     }]
- }, {
-   usePushEach: true
- })
+}, {
+    usePushEach: true
+})
 
 module.exports = mongoose.model('User', UserSchema)

@@ -135,9 +135,10 @@ router.post("/:id/enter", async (req, res) => {
             if (Date.now() > lastCheckInTimestamp + 100) {
                 user.attendance.push(data);
                 await user.save();
-                req.flash('success', 'You have been signed in for today');
-
+                req.flash('success', 'You have been signed in for today');  
             } else {
+                res.send('You have signed in today already')
+
                 req.flash("error", "You have signed in today already");
             }
         } else {
@@ -163,24 +164,25 @@ router.post("/:id/exit", async (req, res) => {
             //check whether the exit time of the last element of the attedance entry has a value
             const lastAttendance = user.attendance[user.attendance.length - 1];
             if (lastAttendance.exit.time) {
+                res.send('You have already signed out today')
                 req.flash('error', 'You have already signed out today');
-                res.redirect(`/${req.params.id}`);
                 return;
             }
             lastAttendance.exit.time = Date.now();
-            lastAttendance.exit.reason = req.body.reason;
+            lastAttendance.exit.exitType = req.body.exitType;
+            console.log("reason",req.body.exitType )
             await user.save();
             req.flash('success', 'You have been successfully signed out')
-            res.redirect(`/${req.params.id}`);
 
         } else { //if no entry
             req.flash('error', 'You do not have an attendance entry ');
-            res.redirect('back')
         }
     } catch (error) {
         console.log('Cannot find User');
     }
 });
+
+
 const userExists = async (email) => {
     const user = await User.findOne({ email: email.toLowerCase().trim() })
     if (user) {
