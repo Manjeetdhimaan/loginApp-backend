@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
     },
     pic: {
         type: String,
-        required: [true, 'Please enter a pic url'],
+        required: [false, 'Please enter a pic url'],
         trim: true
     },
     isServiceProvider: {
@@ -44,11 +44,6 @@ const UserSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: [true, 'Provide your mobile number'],
-        trim: true
-    },
-    leaves: {
-        type: Object,
-        required: false,
         trim: true
     },
     remainingLeaves: {
@@ -71,6 +66,21 @@ const UserSchema = new mongoose.Schema({
         required: false,
         trim: true
     },
+    leaves: [{
+        reason:{
+            type:String,
+            trim:true
+        },
+        from:{
+            type:Date,
+        },
+        to:{
+            type:Date
+        },
+        status:{
+            type:String
+        }
+    }],
     attendance: [{
         date: {
             type: Date,
