@@ -162,7 +162,7 @@ router.post("/:id/enter", async (req, res) => {
             // console.log(lastAttendance.entry<nextMidNight)
             //if (pastMidNight>lastAttendance.entry){}
             // Date.now() > lastCheckInTimestamp
-            if (pastMidNight<lastCheckIn.entry) {
+            if (pastMidNight>lastCheckIn.entry) {
                 user.attendance.push(data)
                 await user.save();
                 res.status(200).json(user);
