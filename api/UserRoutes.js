@@ -84,7 +84,40 @@ router.post('/insert/:id', (req, res) => {
             res.send(article);
         });
 });
-
+router.put('/updateLeaveStatus/:id', (req, res) => {
+    let id = req.params.id;
+    User.findOne({ _id: id }, (err, foundedObject) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send();
+        }
+        else {
+            if (!foundedObject) {
+                res.status(404).send();
+            }
+            else {
+                let leaveArray =[];
+                 foundedObject.leaves.map(a=>{
+                    leaveArray.push(a)                   
+                })
+                leaveArray.map(n=>{
+                    if(n['_id']==req.body.id){
+                        leaveArray[leaveArray.indexOf(n)].status = req.body.event 
+                    }
+                })
+                foundedObject.save((err, updatedObject) => {
+                    if (err) {
+                        console.log(err)
+                        res.status(500).send();
+                    }
+                    else {
+                        res.send(updatedObject)
+                    }
+                })
+            }
+        }
+    })
+})
 
 router.put('/update/:id', (req, res) => {
     let id = req.params.id;
@@ -192,7 +225,7 @@ router.post("/:id/exit", async (req, res) => {
             //check whether the exit time of the last element of the attedance entry has a value
             const lastAttendance = user.attendance[user.attendance.length - 1];
             if (lastAttendance.exit.time) {
-                res.send('You have already signed out today')
+                res.send('You have already checked out today')
                 return;
             }
             lastAttendance.exit.time = Date.now();
