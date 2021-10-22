@@ -95,7 +95,7 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
             if (!foundedObject) {
                 res.status(404).send();
             }
-            else {
+            else {  
                 let leaveArray =[];
                  foundedObject.leaves.map(a=>{
                     leaveArray.push(a)                   

@@ -3,11 +3,11 @@ const  mongoose = require('mongoose');
 const AdminSchema = new mongoose.Schema({
     email:{
         type:String,
-        required: [true, 'Please enter an email address']
+        required: false
     },
     password:{
         type:String,
-        required: [true, 'Please enter a password']
+        required: false
     }
 });
 
