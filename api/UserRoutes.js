@@ -97,12 +97,34 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
             }
             else {  
                 let leaveArray =[];
+                 ;
                  foundedObject.leaves.map(a=>{
                     leaveArray.push(a)                   
                 })
                 leaveArray.map(n=>{
                     if(n['_id']==req.body.id){
                         leaveArray[leaveArray.indexOf(n)].status = req.body.event 
+                        let to = leaveArray[leaveArray.indexOf(n)].to;
+                        let from = leaveArray[leaveArray.indexOf(n)].from;
+                        let diff  = to.getDate() - from.getDate();
+                        if(leaveArray[leaveArray.indexOf(n)].status === "Pending" || leaveArray[leaveArray.indexOf(n)].status === "Denied"){
+                           if(foundedObject.appliedLeaves> 0){
+                            foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
+                           }
+                           
+                           
+                            if(foundedObject.remainingLeaves<24){
+                                foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
+                                foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
+                            }
+                           
+                        }
+                        if(leaveArray[leaveArray.indexOf(n)].status === "Approved" ){
+                            foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
+                            foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) - Number(diff);
+                            foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
+                        }
+                        
                     }
                 })
                 foundedObject.save((err, updatedObject) => {

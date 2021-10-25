@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Admin = require('../models/Admin');
+const User = require('../models/User');
 var MongoClient = require('mongodb').MongoClient;
 
 router.post('/adminLogin', (req, res) => {
@@ -41,7 +42,6 @@ router.get('/', (req, res) => {
 
 
 router.post('/updateAdminCredentials/:id', (req, res) => {
-
     MongoClient.connect(process.env.MONGODB, (err, db) => {
         if (err) throw err;
         let dbo = db.db("myFirstDatabase");
@@ -57,7 +57,6 @@ router.post('/updateAdminCredentials/:id', (req, res) => {
         if (!req.body.password) {
            delete credentials.password
         }
-        console.log("hello", credentials)
         dbo.collection("admin").updateOne({
             id: req.body.id
         }, {

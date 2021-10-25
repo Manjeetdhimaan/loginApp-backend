@@ -4,6 +4,8 @@ var router = require('express').Router();
 
 var Admin = require('../models/Admin');
 
+var User = require('../models/User');
+
 var MongoClient = require('mongodb').MongoClient;
 
 router.post('/adminLogin', function (req, res) {
@@ -56,7 +58,6 @@ router.post('/updateAdminCredentials/:id', function (req, res) {
       delete credentials.password;
     }
 
-    console.log("hello", credentials);
     dbo.collection("admin").updateOne({
       id: req.body.id
     }, {
