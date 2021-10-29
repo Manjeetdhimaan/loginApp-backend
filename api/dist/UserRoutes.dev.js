@@ -171,12 +171,23 @@ router.put('/updateLeaveStatus/:id', function (req, res) {
             var from = leaveArray[leaveArray.indexOf(n)].from;
             var diff = to.getDate() - from.getDate();
 
-            if (leaveArray[leaveArray.indexOf(n)].status === "Pending" || leaveArray[leaveArray.indexOf(n)].status === "Denied") {
-              foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
+            if (leaveArray[leaveArray.indexOf(n)].status == "Pending" || leaveArray[leaveArray.indexOf(n)].status == "Denied") {
+              if (foundedObject.appliedLeaves > 0) {
+                console.log('hello:' + leaveArray[leaveArray.indexOf(n)].status, 'hi:' + req.body.event);
+                console.log(foundedObject.remainingLeaves);
+                foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
+
+                if (foundedObject.remainingLeaves <= 24) {
+                  foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
+                  foundedObject.totalLeaves = Number(foundedObject.remainingLeaves);
+                }
+              }
             }
 
             if (leaveArray[leaveArray.indexOf(n)].status === "Approved") {
               foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
+              foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) - Number(diff);
+              foundedObject.totalLeaves = Number(foundedObject.remainingLeaves);
             }
           }
         });

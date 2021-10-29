@@ -25,19 +25,27 @@ router.post('/adminLogin', (req, res) => {
         })
     });
 
-   
+
 })
 
 router.get('/', (req, res) => {
     MongoClient.connect(process.env.MONGODB, (err, db) => {
         if (err) throw err;
         var dbo = db.db("myFirstDatabase");
-        dbo.collection("admin").findOne({}, function(err, result) {
-            if (err) throw err;
-            res.send(result)
-            db.close();
-          });
-    })
+        dbo.collection("admin").findOne().then(user => {
+            if (user) {
+                res.status(200).json(user)
+            } else {
+                res.status(401).json({
+                    error: 'You are not Admin!'
+                })
+            }
+        }).catch(err => {
+            res.status(500).json({
+                error: err.message
+            })
+        })
+    });
 });
 
 
@@ -49,13 +57,13 @@ router.post('/updateAdminCredentials/:id', (req, res) => {
             email: req.body.email,
             password: req.body.password
         };
-        
+
 
         if (!req.body.email) {
-           delete credentials.email
+            delete credentials.email
         }
         if (!req.body.password) {
-           delete credentials.password
+            delete credentials.password
         }
         dbo.collection("admin").updateOne({
             id: req.body.id
@@ -63,12 +71,12 @@ router.post('/updateAdminCredentials/:id', (req, res) => {
             $set: credentials
         }, {
             new: true
-        }, function (err, article) {
+        }, function(err, article) {
             if (err) return handleError(err);
             res.send(req.body);
         });
 
-        
+
     })
 })
 

@@ -13,61 +13,79 @@ router.get('/', (req, res) => {
     User.find().then(users => {
         res.status(200).json(users);
     }).catch(err => {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({
+            error: err.message
+        })
     })
 })
 
 
 
 
-router.post('/register', async (req, res) => {
+router.post('/register', async(req, res) => {
     if (await userExists(req.body.email)) {
-        res.status(409).json({ error: 'Email already exists' })
-    }
-    else {
+        res.status(409).json({
+            error: 'Email already exists'
+        })
+    } else {
         const newUser = new User(req.body)
         await newUser.save().then(user => {
             res.status(201).json(user)
         }).catch((err) => {
-            res.status(500).json({ error: err.message })
+            res.status(500).json({
+                error: err.message
+            })
         })
     }
 })
-const userExists = async (email) => {
-    const user = await User.findOne({ email: email.toLowerCase().trim() })
+
+const userExists = async(email) => {
+    const user = await User.findOne({
+        email: email.toLowerCase().trim()
+    })
     if (user) {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
 
 router.post('/login', (req, res) => {
-    User.findOne({ email: req.body.email, password: req.body.password }).then(user => {
+    User.findOne({
+        email: req.body.email,
+        password: req.body.password
+    }).then(user => {
         if (user) {
             res.status(200).json(user)
-        }
-        else {
-            res.status(401).json({ error: 'Incorrect email or password' })
+        } else {
+            res.status(401).json({
+                error: 'Incorrect email or password'
+            })
         }
     }).catch(err => {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({
+            error: err.message
+        })
     })
 })
 
 
 router.get('/:id', (req, res) => {
     let id = req.params.id
-    User.findOne({ _id: id }).then(user => {
+    User.findOne({
+        _id: id
+    }).then(user => {
         if (user) {
             res.status(200).json(user)
-        }
-        else {
-            res.status(401).json({ error: 'Incorrect email or password' })
+        } else {
+            res.status(401).json({
+                error: 'Incorrect email or password'
+            })
         }
     }).catch(err => {
-        res.status(500).json({ error: err.message })
+        res.status(500).json({
+            error: err.message
+        })
     })
 })
 
@@ -78,61 +96,62 @@ router.post('/insert/:id', (req, res) => {
         totalLeaves: req.body.totalLeaves,
         appliedLeaves: req.body.appliedLeaves
     };
-    User.updateOne(
-        { _id: id }, { $set: leaves }, { new: true }, function (err, article) {
-            if (err) return handleError(err);
-            res.send(article);
-        });
+    User.updateOne({
+        _id: id
+    }, {
+        $set: leaves
+    }, {
+        new: true
+    }, function(err, article) {
+        if (err) return handleError(err);
+        res.send(article);
+    });
 });
 router.put('/updateLeaveStatus/:id', (req, res) => {
     let id = req.params.id;
-    User.findOne({ _id: id }, (err, foundedObject) => {
+    User.findOne({
+        _id: id
+    }, (err, foundedObject) => {
         if (err) {
             console.log(err);
             res.status(500).send();
-        }
-        else {
+        } else {
             if (!foundedObject) {
                 res.status(404).send();
-            }
-            else {  
-                let leaveArray =[];
-                 ;
-                 foundedObject.leaves.map(a=>{
-                    leaveArray.push(a)                   
+            } else {
+                let leaveArray = [];;
+                foundedObject.leaves.map(a => {
+                    leaveArray.push(a)
                 })
-                leaveArray.map(n=>{
-                    if(n['_id']==req.body.id){
-                        leaveArray[leaveArray.indexOf(n)].status = req.body.event 
+                leaveArray.map(n => {
+                    if (n['_id'] == req.body.id) {
+                        leaveArray[leaveArray.indexOf(n)].status = req.body.event
                         let to = leaveArray[leaveArray.indexOf(n)].to;
                         let from = leaveArray[leaveArray.indexOf(n)].from;
-                        let diff  = to.getDate() - from.getDate();
-                        if(leaveArray[leaveArray.indexOf(n)].status === "Pending" || leaveArray[leaveArray.indexOf(n)].status === "Denied"){
-                           if(foundedObject.appliedLeaves> 0){
-                            foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
-                           }
-                           
-                           
-                            if(foundedObject.remainingLeaves<24){
-                                foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
-                                foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
+                        let diff = to.getDate() - from.getDate();
+                        if (leaveArray[leaveArray.indexOf(n)].status == "Pending" || leaveArray[leaveArray.indexOf(n)].status == "Denied") {
+                            if (foundedObject.appliedLeaves > 0) {
+                                console.log('hello:' + leaveArray[leaveArray.indexOf(n)].status, 'hi:' + req.body.event)
+                                console.log(foundedObject.remainingLeaves)
+                                foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
+                                if (foundedObject.remainingLeaves <= 24) {
+                                    foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
+                                    foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
+                                }
                             }
-                           
                         }
-                        if(leaveArray[leaveArray.indexOf(n)].status === "Approved" ){
+                        if (leaveArray[leaveArray.indexOf(n)].status === "Approved") {
                             foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
                             foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) - Number(diff);
                             foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
                         }
-                        
                     }
                 })
                 foundedObject.save((err, updatedObject) => {
                     if (err) {
                         console.log(err)
                         res.status(500).send();
-                    }
-                    else {
+                    } else {
                         res.send(updatedObject)
                     }
                 })
@@ -143,16 +162,16 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
 
 router.put('/update/:id', (req, res) => {
     let id = req.params.id;
-    User.findOne({ _id: id }, (err, foundedObject) => {
+    User.findOne({
+        _id: id
+    }, (err, foundedObject) => {
         if (err) {
             console.log(err);
             res.status(500).send();
-        }
-        else {
+        } else {
             if (!foundedObject) {
                 res.status(404).send();
-            }
-            else {
+            } else {
                 if (req.body.fullname) {
                     foundedObject.fullname = req.body.fullname;
                 }
@@ -169,8 +188,7 @@ router.put('/update/:id', (req, res) => {
                     if (err) {
                         console.log(err)
                         res.status(500).send();
-                    }
-                    else {
+                    } else {
                         res.send(updatedObject)
                     }
                 })
@@ -178,19 +196,21 @@ router.put('/update/:id', (req, res) => {
         }
     })
 })
- 
+
 //check in
-router.post("/:id/enter", async (req, res) => {
+router.post("/:id/enter", async(req, res) => {
     try {
         const data = {
             entry: Date.now()
         };
-        const user = await User.findOne({ _id: req.params.id });
+        const user = await User.findOne({
+            _id: req.params.id
+        });
         //if the user has an attendance array;
         if (user.attendance || user.attendance.length > 0) {
             //for a new checkin attendance, the last checkin
             //must be at least 24hrs less than the new checkin time;
-          
+
             // const lastCheckInTimestamp = lastCheckIn.date;
 
             // var ts = Math.round(new Date().getTime() / 1000);
@@ -200,24 +220,27 @@ router.post("/:id/enter", async (req, res) => {
 
             // }
             var lastCheckIn = user.attendance[user.attendance.length - 1];
-            if(!lastCheckIn){
-                lastCheckIn  = {
-                    exit: { exitType: 'Full day', time: new Date() },
+            if (!lastCheckIn) {
+                lastCheckIn = {
+                    exit: {
+                        exitType: 'Full day',
+                        time: new Date()
+                    },
                     entry: new Date().setHours(-24, 0, 0, 0),
                     _id: ("616fd18fc902ba3a12893ab4"),
                     date: Date.now()
-                  }
-                
+                }
+
             }
             let nextMidNight = new Date();
-            nextMidNight.setHours(24,0,0,0);
+            nextMidNight.setHours(24, 0, 0, 0);
             let pastMidNight = new Date();
-            pastMidNight.setHours(0,0,0,0);
+            pastMidNight.setHours(0, 0, 0, 0);
             // const lastAttendance = user.attendance[user.attendance.length - 1];
             // console.log(lastAttendance.entry<nextMidNight)
             //if (pastMidNight>lastAttendance.entry){}
             // Date.now() > lastCheckInTimestamp
-            if (pastMidNight>lastCheckIn.entry) {
+            if (pastMidNight > lastCheckIn.entry) {
                 user.attendance.push(data)
                 await user.save();
                 res.status(200).json(user);
@@ -236,10 +259,12 @@ router.post("/:id/enter", async (req, res) => {
     }
 });
 //check out
-router.post("/:id/exit", async (req, res) => {
+router.post("/:id/exit", async(req, res) => {
     // the attendance than can be checked out must be last entry in the attendance array
     try {
-        const user = await User.findOne({ _id: req.params.id });
+        const user = await User.findOne({
+            _id: req.params.id
+        });
 
         //check if there is an attendance entry
         if (user.attendance && user.attendance.length > 0) {
@@ -265,25 +290,27 @@ router.post("/:id/exit", async (req, res) => {
 
 //leave management
 
-router.post("/:id/apply", async (req, res) => {
-      try {
-           const data = {
-              from : new Date(req.body.from),
-              to : new Date(req.body.to),
-              reason: req.body.reason,
-              status:req.body.status
+router.post("/:id/apply", async(req, res) => {
+    try {
+        const data = {
+            from: new Date(req.body.from),
+            to: new Date(req.body.to),
+            reason: req.body.reason,
+            status: req.body.status
         };
-        const user = await User.findOne({ _id: req.params.id });
+        const user = await User.findOne({
+            _id: req.params.id
+        });
         //check if there is an attendance entry
-        
-           user.leaves.push(data)
-            await user.save();
-            res.status(200).json(user)
+
+        user.leaves.push(data)
+        await user.save();
+        res.status(200).json(user)
 
     } catch (error) {
         console.log('Cannot find User');
     }
-  
+
 });
 
 
