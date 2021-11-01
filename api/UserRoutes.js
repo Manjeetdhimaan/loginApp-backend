@@ -129,10 +129,8 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
                         let to = leaveArray[leaveArray.indexOf(n)].to;
                         let from = leaveArray[leaveArray.indexOf(n)].from;
                         let diff = to.getDate() - from.getDate();
-                        if (leaveArray[leaveArray.indexOf(n)].status == "Pending" || leaveArray[leaveArray.indexOf(n)].status == "Denied") {
+                        if (leaveArray[leaveArray.indexOf(n)].status == "Denied" && req.body.prevStatus !== "Pending") {
                             if (foundedObject.appliedLeaves > 0) {
-                                console.log('hello:' + leaveArray[leaveArray.indexOf(n)].status, 'hi:' + req.body.event)
-                                console.log(foundedObject.remainingLeaves)
                                 foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
                                 if (foundedObject.remainingLeaves <= 24) {
                                     foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
