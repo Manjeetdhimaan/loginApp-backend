@@ -204,6 +204,7 @@ router.post("/:id/enter", async(req, res) => {
         const user = await User.findOne({
             _id: req.params.id
         });
+
         //if the user has an attendance array;
         if (user.attendance || user.attendance.length > 0) {
             //for a new checkin attendance, the last checkin
@@ -218,6 +219,10 @@ router.post("/:id/enter", async(req, res) => {
 
             // }
             var lastCheckIn = user.attendance[user.attendance.length - 1];
+            // if (!lastCheckIn.exit.time) {
+            //     res.send('Please checkout first')
+            //     return;
+            // }
             if (!lastCheckIn) {
                 lastCheckIn = {
                     exit: {
@@ -229,6 +234,11 @@ router.post("/:id/enter", async(req, res) => {
                     date: Date.now()
                 }
 
+            }
+
+            if (!lastCheckIn.exit.time) {
+                res.send(`Please checkout ${user.fullname}\'s previous check in first`)
+                return;
             }
             let nextMidNight = new Date();
             nextMidNight.setHours(24, 0, 0, 0);
@@ -244,7 +254,7 @@ router.post("/:id/enter", async(req, res) => {
                 res.status(200).json(user);
 
             } else {
-                res.send('You have signed in today already')
+                res.send(`${user.fullname} have signed in today already`)
             }
         } else {
             user.attendance.push(data);
@@ -270,16 +280,17 @@ router.post("/:id/exit", async(req, res) => {
             //check whether the exit time of the last element of the attedance entry has a value
             const lastAttendance = user.attendance[user.attendance.length - 1];
             if (lastAttendance.exit.time) {
-                res.send('You have already checked out today')
+                res.send(`${user.fullname} has already checked out today`)
                 return;
             }
+
             lastAttendance.exit.time = Date.now();
             lastAttendance.exit.exitType = req.body.exitType;
             await user.save();
             res.status(200).json(user)
 
         } else { //if no entry
-            res.send('You do not have an attendance entry')
+            res.send(`${user.fullname} do not have an attendance entry`)
         }
     } catch (error) {
         console.log('Cannot find User');
@@ -308,7 +319,6 @@ router.post("/:id/apply", async(req, res) => {
     } catch (error) {
         console.log('Cannot find User');
     }
-
 });
 
 

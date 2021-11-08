@@ -261,7 +261,7 @@ router.post("/:id/enter", function _callee2(req, res) {
           user = _context3.sent;
 
           if (!(user.attendance || user.attendance.length > 0)) {
-            _context3.next = 22;
+            _context3.next = 25;
             break;
           }
 
@@ -273,7 +273,10 @@ router.post("/:id/enter", function _callee2(req, res) {
           // console.log(Date.now(), lastCheckInTimestamp);
           // if(ts<tsYesterday){
           // }
-          lastCheckIn = user.attendance[user.attendance.length - 1];
+          lastCheckIn = user.attendance[user.attendance.length - 1]; // if (!lastCheckIn.exit.time) {
+          //     res.send('Please checkout first')
+          //     return;
+          // }
 
           if (!lastCheckIn) {
             lastCheckIn = {
@@ -287,6 +290,15 @@ router.post("/:id/enter", function _callee2(req, res) {
             };
           }
 
+          if (lastCheckIn.exit.time) {
+            _context3.next = 11;
+            break;
+          }
+
+          res.send("Please checkout ".concat(user.fullname, "'s previous check in first"));
+          return _context3.abrupt("return");
+
+        case 11:
           nextMidNight = new Date();
           nextMidNight.setHours(24, 0, 0, 0);
           pastMidNight = new Date();
@@ -296,47 +308,47 @@ router.post("/:id/enter", function _callee2(req, res) {
           // Date.now() > lastCheckInTimestamp
 
           if (!(pastMidNight > lastCheckIn.entry)) {
-            _context3.next = 19;
+            _context3.next = 22;
             break;
           }
 
           user.attendance.push(data);
-          _context3.next = 16;
+          _context3.next = 19;
           return regeneratorRuntime.awrap(user.save());
 
-        case 16:
-          res.status(200).json(user);
-          _context3.next = 20;
-          break;
-
         case 19:
-          res.send('You have signed in today already');
-
-        case 20:
-          _context3.next = 25;
+          res.status(200).json(user);
+          _context3.next = 23;
           break;
 
         case 22:
-          user.attendance.push(data);
-          _context3.next = 25;
-          return regeneratorRuntime.awrap(user.save());
+          res.send("".concat(user.fullname, " have signed in today already"));
 
-        case 25:
-          _context3.next = 31;
+        case 23:
+          _context3.next = 28;
           break;
 
-        case 27:
-          _context3.prev = 27;
+        case 25:
+          user.attendance.push(data);
+          _context3.next = 28;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 28:
+          _context3.next = 34;
+          break;
+
+        case 30:
+          _context3.prev = 30;
           _context3.t0 = _context3["catch"](0);
           console.log("something went wrong");
           console.log(_context3.t0);
 
-        case 31:
+        case 34:
         case "end":
           return _context3.stop();
       }
     }
-  }, null, null, [[0, 27]]);
+  }, null, null, [[0, 30]]);
 }); //check out
 
 router.post("/:id/exit", function _callee3(req, res) {
@@ -367,7 +379,7 @@ router.post("/:id/exit", function _callee3(req, res) {
             break;
           }
 
-          res.send('You have already checked out today');
+          res.send("".concat(user.fullname, " has already checked out today"));
           return _context4.abrupt("return");
 
         case 9:
@@ -383,7 +395,7 @@ router.post("/:id/exit", function _callee3(req, res) {
 
         case 16:
           //if no entry
-          res.send('You do not have an attendance entry');
+          res.send("".concat(user.fullname, " do not have an attendance entry"));
 
         case 17:
           _context4.next = 22;
