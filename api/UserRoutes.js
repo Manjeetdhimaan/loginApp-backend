@@ -128,7 +128,7 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
                         leaveArray[leaveArray.indexOf(n)].status = req.body.event
                         let to = leaveArray[leaveArray.indexOf(n)].to;
                         let from = leaveArray[leaveArray.indexOf(n)].from;
-                        let diff = to.getDate() - from.getDate();
+                        let diff = (to.getDate() - from.getDate()) + 1;
                         if (leaveArray[leaveArray.indexOf(n)].status == "Denied" && req.body.prevStatus !== "Pending") {
                             if (foundedObject.appliedLeaves > 0) {
                                 foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);

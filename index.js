@@ -33,18 +33,6 @@ app.use(flash());
 app.use('/users', userRoutes);
 app.use('/admin', adminRoutes);
 
-// MongoClient.connect(process.env.MONGODB, function(err, db) {
-//     if (err) throw err;
-//     var dbo = db.db("myFirstDatabase");
-//     var myquery = { firstname: "Shalu" };
-//     var newvalues = { $set: { firstname: "Michael", lastname: "Canyon" } };
-//     dbo.collection("users").updateOne(myquery, newvalues, function(err, res) {
-//       if (err) throw err;
-//       console.log("1 document updated");
-//       db.close();
-//     });
-//   });
-
 
 //  mongodb+srv://newUser:<password>@cluster0.qcyjq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.connect(process.env.MONGODB, { useUnifiedTopology: true })
