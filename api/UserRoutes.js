@@ -135,6 +135,7 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
                                 if (foundedObject.remainingLeaves <= 24) {
                                     foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
                                     foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
+                                    foundedObject.appliedLeaves = leaveArray.length
                                 }
                             }
                         }
@@ -142,6 +143,7 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
                             foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
                             foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) - Number(diff);
                             foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
+                            foundedObject.appliedLeaves = leaveArray.length
                         }
                     }
                 })
