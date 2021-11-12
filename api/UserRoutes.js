@@ -131,19 +131,19 @@ router.put('/updateLeaveStatus/:id', (req, res) => {
                         let diff = (to.getDate() - from.getDate()) + 1;
                         if (leaveArray[leaveArray.indexOf(n)].status == "Denied" && req.body.prevStatus !== "Pending") {
                             if (foundedObject.appliedLeaves > 0) {
-                                foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
+                                // foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
                                 if (foundedObject.remainingLeaves <= 24) {
                                     foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
                                     foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
-                                    foundedObject.appliedLeaves = leaveArray.length
+                                        // foundedObject.appliedLeaves = leaveArray.length
                                 }
                             }
                         }
                         if (leaveArray[leaveArray.indexOf(n)].status === "Approved") {
-                            foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
+                            // foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
                             foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) - Number(diff);
                             foundedObject.totalLeaves = Number(foundedObject.remainingLeaves)
-                            foundedObject.appliedLeaves = leaveArray.length
+                                // foundedObject.appliedLeaves = leaveArray.length
                         }
                     }
                 })
@@ -221,10 +221,6 @@ router.post("/:id/enter", async(req, res) => {
 
             // }
             var lastCheckIn = user.attendance[user.attendance.length - 1];
-            // if (!lastCheckIn.exit.time) {
-            //     res.send('Please checkout first')
-            //     return;
-            // }
             if (!lastCheckIn) {
                 lastCheckIn = {
                     exit: {
@@ -235,9 +231,7 @@ router.post("/:id/enter", async(req, res) => {
                     _id: ("616fd18fc902ba3a12893ab4"),
                     date: Date.now()
                 }
-
             }
-
             if (!lastCheckIn.exit.time) {
                 res.send(`Please checkout ${user.fullname}\'s previous check in first`)
                 return;

@@ -173,21 +173,18 @@ router.put('/updateLeaveStatus/:id', function (req, res) {
 
             if (leaveArray[leaveArray.indexOf(n)].status == "Denied" && req.body.prevStatus !== "Pending") {
               if (foundedObject.appliedLeaves > 0) {
-                foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
-
+                // foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) - Number(diff);
                 if (foundedObject.remainingLeaves <= 24) {
                   foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) + Number(diff);
-                  foundedObject.totalLeaves = Number(foundedObject.remainingLeaves);
-                  foundedObject.appliedLeaves = leaveArray.length;
+                  foundedObject.totalLeaves = Number(foundedObject.remainingLeaves); // foundedObject.appliedLeaves = leaveArray.length
                 }
               }
             }
 
             if (leaveArray[leaveArray.indexOf(n)].status === "Approved") {
-              foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
+              // foundedObject.appliedLeaves = Number(foundedObject.appliedLeaves) + Number(diff);
               foundedObject.remainingLeaves = Number(foundedObject.totalLeaves) - Number(diff);
-              foundedObject.totalLeaves = Number(foundedObject.remainingLeaves);
-              foundedObject.appliedLeaves = leaveArray.length;
+              foundedObject.totalLeaves = Number(foundedObject.remainingLeaves); // foundedObject.appliedLeaves = leaveArray.length
             }
           }
         });
@@ -275,10 +272,7 @@ router.post("/:id/enter", function _callee2(req, res) {
           // console.log(Date.now(), lastCheckInTimestamp);
           // if(ts<tsYesterday){
           // }
-          lastCheckIn = user.attendance[user.attendance.length - 1]; // if (!lastCheckIn.exit.time) {
-          //     res.send('Please checkout first')
-          //     return;
-          // }
+          lastCheckIn = user.attendance[user.attendance.length - 1];
 
           if (!lastCheckIn) {
             lastCheckIn = {
